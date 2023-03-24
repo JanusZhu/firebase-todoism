@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { db } from "../config/firebase";
+import { auth, googleProvider } from "../config/firebase";
 import { getDocs, collection, addDoc } from "firebase/firestore";
+import { signInWithPopup, signOut } from "firebase/auth";
 import Todo from "./Todo";
 
 const TodoList = () => {
@@ -10,6 +12,13 @@ const TodoList = () => {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(true);
   const todosCollectionRef = collection(db, "todos");
+  const getCurrentUser = () => {
+    if (auth.currentUser) {
+      setUserName(auth.currentUser.displayName);
+      setLoggedIn(true);
+    }
+    console.log(auth.currentUser);
+  };
   const getTodoList = async () => {
     try {
       const data = await getDocs(todosCollectionRef);
@@ -44,12 +53,32 @@ const TodoList = () => {
     }
     setInput("");
   };
-
+  const signInWithGoogle = async () => {
+    try {
+      await signInWithPopup(auth, googleProvider);
+      getCurrentUser();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const logOut = async () => {
+    try {
+      await signOut(auth);
+      setLoggedIn(false);
+      getCurrentUser();
+    } catch (error) {
+      console.error(error);
+    }
+  };
   return (
     <div>
       <div className="welcome">
         <p>Welcome back {loggedIn ? userName : ""}!</p>{" "}
-        {loggedIn ? <button>LogOut</button> : <button>LogIn</button>}
+        {loggedIn ? (
+          <button onClick={logOut}>LogOut</button>
+        ) : (
+          <button onClick={signInWithGoogle}>LogIn</button>
+        )}
       </div>
       <h1>Todoism</h1>
       <form
