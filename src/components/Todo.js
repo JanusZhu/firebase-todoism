@@ -36,6 +36,9 @@ const Todo = ({ todo, getTodoList }) => {
       console.error(error);
     }
   };
+  const handleBlur = () => {
+    setInputMode(false);
+  };
 
   return (
     <div className="todo">
@@ -46,6 +49,7 @@ const Todo = ({ todo, getTodoList }) => {
       />
       {inputMode ? (
         <input
+          maxLength={20}
           defaultValue={todo.title}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
@@ -55,6 +59,8 @@ const Todo = ({ todo, getTodoList }) => {
           onChange={(e) => {
             setInput(e.target.value);
           }}
+          onBlur={handleBlur}
+          autoFocus
         />
       ) : (
         <div

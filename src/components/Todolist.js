@@ -4,6 +4,8 @@ import { getDocs, collection, addDoc } from "firebase/firestore";
 import Todo from "./Todo";
 
 const TodoList = () => {
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [userName, setUserName] = useState("");
   const [todos, setTodos] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(true);
@@ -45,7 +47,11 @@ const TodoList = () => {
 
   return (
     <div>
-      <h1>Todo List</h1>
+      <div className="welcome">
+        <p>Welcome back {loggedIn ? userName : ""}!</p>{" "}
+        {loggedIn ? <button>LogOut</button> : <button>LogIn</button>}
+      </div>
+      <h1>Todoism</h1>
       <form
         onSubmit={(e) => {
           if (input) {
@@ -53,7 +59,11 @@ const TodoList = () => {
           }
         }}
       >
-        <input value={input} onChange={(e) => setInput(e.target.value)} />
+        <input
+          maxLength={20}
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+        />
         <button type="submit">Add Todo</button>
       </form>
 
